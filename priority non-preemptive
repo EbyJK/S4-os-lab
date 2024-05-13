@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+struct Process {
+    char name[10];
+    int AT;
+    int BT;
+    int priority;
+    int WT;
+    int TT;
+    int flag;
+};
+
+int main() {
+    int n, i, j, time = 0;
+    float avgWT = 0, avgTT = 0;
+    printf("Enter the Number of Processes: ");
+    scanf("%d", &n);
+    struct Process P[n];
+
+    for (i = 0; i < n; i++) {
+        printf("Enter Process Name: ");
+        scanf("%s", P[i].name);
+        printf("Enter Arrival time of Process %s: ", P[i].name);
+        scanf("%d", &P[i].AT);
+        printf("Enter Burst time for Process %s: ", P[i].name);
+        scanf("%d", &P[i].BT);
+        printf("Enter Priority for Process %s: ", P[i].name);
+        scanf("%d", &P[i].priority);
+        P[i].WT = 0;
+        P[i].TT = 0;
+        P[i].flag = 0;
+    }
+
+    // Sort processes based on priority (higher priority first)
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (P[j].priority > P[j + 1].priority) {
+                struct Process temp = P[j];
+                P[j] = P[j + 1];
+                P[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("\nGantt Chart\n");
+    printf("|");
+    for (i = 0; i < n; i++) {
+        printf(" %s %d-%d |", P[i].name, time, time + P[i].BT);
+        P[i].WT = time - P[i].AT;
+        time += P[i].BT;
+        P[i].TT = P[i].WT + P[i].BT;
+    }
+    printf("\n");
+
+    for (i = 0; i < n; i++) {
+        avgWT += P[i].WT;
+        avgTT += P[i].TT;
+        printf("\nProcess Name\tArrival Time\tBurst Time\tPriority\tWaiting time\tTurnaround Time\n");
+        printf("%s\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n", P[i].name, P[i].AT, P[i].BT, P[i].priority, P[i].WT, P[i].TT);
+    }
+
+    avgWT /= n;
+    avgTT /= n;
+    printf("\nAverage Waiting Time: %f\n", avgWT);
+    printf("Average Turnaround Time: %f\n", avgTT);
+
+    return 0;
+}
