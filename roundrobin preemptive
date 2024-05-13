@@ -1,0 +1,71 @@
+#include <stdio.h>
+
+struct Process {
+    char name[10];
+    int AT;
+    int BT;
+    int RT; // Remaining Time
+    int WT;
+    int TT;
+    int flag;
+};
+
+int main() {
+    int n, i, time = 0, time_quantum;
+    float avgWT = 0, avgTT = 0;
+    printf("Enter the Number of Processes: ");
+    scanf("%d", &n);
+    struct Process P[n];
+
+    for (i = 0; i < n; i++) {
+        printf("Enter Process Name: ");
+        scanf("%s", P[i].name);
+        printf("Enter Arrival time of Process %s: ", P[i].name);
+        scanf("%d", &P[i].AT);
+        printf("Enter Burst time for Process %s: ", P[i].name);
+        scanf("%d", &P[i].BT);
+        P[i].RT = P[i].BT;
+        P[i].flag = 0;
+    }
+
+    printf("Enter Time Quantum: ");
+    scanf("%d", &time_quantum);
+
+    printf("\nGantt Chart\n");
+    printf("|");
+    while (1) {
+        int done = 1;
+        for (i = 0; i < n; i++) {
+            if (P[i].RT > 0) {
+                done = 0;
+                if (P[i].RT > time_quantum) {
+                    printf(" %s %d-%d |", P[i].name, time, time + time_quantum);
+                    time += time_quantum;
+                    P[i].RT -= time_quantum;
+                } else {
+                    printf(" %s %d-%d |", P[i].name, time, time + P[i].RT);
+                    time += P[i].RT;
+                    P[i].WT = time - P[i].AT - P[i].BT;
+                    P[i].RT = 0;
+                }
+            }
+        }
+        if (done == 1) break;
+    }
+    printf("\n");
+
+    for (i = 0; i < n; i++) {
+        avgWT += P[i].WT;
+        P[i].TT = P[i].BT + P[i].WT;
+        avgTT += P[i].TT;
+        printf("\nProcess Name\tArrival Time\tBurst Time\tWaiting time\tTurnaround Time\tFlag\n");
+        printf("%s\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n", P[i].name, P[i].AT, P[i].BT, P[i].WT, P[i].TT, P[i].flag);
+    }
+
+    avgWT /= n;
+    avgTT /= n;
+    printf("\nAverage Waiting Time: %f\n", avgWT);
+    printf("Average Turnaround Time: %f\n", avgTT);
+
+    return 0;
+}
