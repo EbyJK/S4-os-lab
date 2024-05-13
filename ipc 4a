@@ -1,0 +1,98 @@
+#include<sys/ipc.h>
+#include<sys/shm.h>
+#include<stdio.h>
+int main(){
+int n,r;
+        int i;
+int j;
+        int k;
+int *a,*b,*c;
+key_t key1=ftok("shmfile",65);
+
+int shmid1=shmget(key1,sizeof(int),0666|IPC_CREAT);
+int shmid2=shmget(key1,sizeof(int),0666|IPC_CREAT);
+int shmid3=shmget(key1,sizeof(int),0666|IPC_CREAT);
+a=(int*)shmat(shmid1,(void*)0,0);
+
+b=a+1;
+c=a+2;
+printf("Enter data\n");
+printf("enter value of n & r\n");
+
+scanf("%d%d",&n,&r);
+*a=1;
+
+for(i=1;i<=n;i++){
+*a=(*a)*i;
+
+
+}
+
+*b=1;
+
+for(j=1;j<=r;j++){
+
+*b=(*b)*j;
+
+}
+
+*c=1;
+int z=n-r;
+if(z>0){
+
+for(k=1;k<=z;k++){
+*c=(*c)*k;
+}
+
+
+}
+else if(z==0){
+return 1;
+
+}
+else {
+printf("negative number number not possible\n");
+
+}
+
+
+
+printf("factorial of n:%d\n",*a);
+printf("factorial of r:%d\n",*b);
+printf("factorial of n-r:%d\n",*c);
+shmdt(a);
+shmdt(b);
+shmdt(c);
+return 0;
+
+
+}
+///////////////////////////
+#include <sys/ipc.h>
+#include<sys/shm.h>
+#include<stdio.h>
+int main(){
+key_t key1=ftok("shmfile",65);
+int *a,*b,*c,i,j,k;
+int shmid1=shmget(key1,sizeof(int),0666|IPC_CREAT);
+int shmid2=shmget(key1,sizeof(int),0666|IPC_CREAT);
+int shmid3=shmget(key1,sizeof(int),0666|IPC_CREAT);
+a=(int*)shmat(shmid1,(void*)0,0);
+b=a+1;
+c=a+2;
+float comb;
+comb=(float)(*a)/((*b)*(*c));
+printf("data read from memory,n : %d\n",*a);
+printf("data read from memory,r : %d\n",*b);
+printf("data read from memory,n-r: %d\n",*c);
+printf("factorial read is:%0.2f\n",comb);
+
+
+shmdt(a);
+shmdt(b);
+shmdt(c);
+shmctl(shmid1,IPC_RMID,NULL);
+shmctl(shmid2,IPC_RMID,NULL);
+shmctl(shmid3,IPC_RMID,NULL);
+return 0;
+}
