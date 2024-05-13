@@ -1,0 +1,51 @@
+#include<sys/ipc.h>
+#include<sys/shm.h>
+#include<stdio.h>
+int  main(){
+key_t key=2000;
+int shmid=shmget(key,sizeof(int),0666|IPC_CREAT);
+
+int *num=(int*)shmat(shmid,(void*)0,0);
+printf("Enter  a number:");
+scanf("%d",num);
+printf("Written number in shared memory is %d\n",*num);
+shmdt(num);
+return 0;
+}
+/////////////////////////////////////////////
+#include<sys/ipc.h>
+#include<sys/shm.h>
+#include<stdio.h>
+#include<string.h>
+
+int main(){
+key_t key=2000;
+int shmid=shmget(key,sizeof(int), 0666|IPC_CREAT);
+
+int *num=(int*)shmat(shmid,(void*)0,0);
+shmid=shmget(key,sizeof(char)*20 , 0666|IPC_CREAT);
+
+char *reverseStr=(char*)shmat(shmid,(void*)0,0);
+int originalNUm=*num;
+int duplicate=originalNUm;
+int reversedNUm=0;
+while(originalNUm>0){
+reversedNUm=reversedNUm*10 +originalNUm %10;
+originalNUm/=10;
+
+
+}
+printf("Reversed number in shared memory is %d\n",reversedNUm);
+if(reversedNUm==duplicate){
+
+printf("The number is a palindrome\n");
+}
+else{
+printf("The number is not a palindrome\n");
+}
+shmdt(num);
+//shmdt(reversedNUm);
+shmdt(reverseStr);
+return 0;
+
+}
