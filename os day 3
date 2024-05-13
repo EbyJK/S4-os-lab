@@ -1,0 +1,173 @@
+(h,i)opendir ,readdir
+#include<stdio.h>
+
+#include<dirent.h>
+
+#include<stdlib.h>
+
+void main()
+
+{ DIR *dirp;
+
+struct dirent *dp;
+
+if((dirp=opendir("/home/s4csb/ebycsb"))==NULL)
+
+{printf("\n cannot open");
+
+exit(1); }
+
+for(dp=readdir(dirp); dp!=NULL; dp=readdir(dirp))
+
+{
+
+if(dp->d_type==DT_REG)
+
+printf("%s\n",dp->d_name);
+
+}
+
+closedir(dirp);
+
+}
+--------------------------------------------------
+
+g)stat
+#include<sys/stat.h>
+#include<stdio.h>
+#include<time.h>
+#include<stdint.h>
+int main(){
+struct stat sfile;
+        stat("even.txt",&sfile);
+printf("Inode Number=%ld\n",sfile.st_ino);
+printf("Size=%ld\n",(long)sfile.st_size);
+
+}
+----------------------------------------------------------
+f) close
+#include<fcntl.h>
+#include<stdio.h>
+#include<unistd.h>
+#include<stdlib.h>
+int main(){
+int fd1=open("test.txt",O_RDONLY);
+if(fd1<0){
+printf("ERROR\n");
+exit(1);
+}
+printf("opened the fd=%d\n",fd1);
+if(close(fd1)<0){
+printf("ERROR\n");
+exit(1);
+
+}
+printf("closed the fd.\n");
+
+}
+----------------------------------------------------------------------
+e) wait
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/wait.h>
+#include<unistd.h>
+int main(){
+pid_t cpid;
+if(fork()==0){
+exit(0);}
+else{
+
+cpid= wait(NULL);
+
+}
+printf("Parent pid=%d\n",getpid());
+printf("Child pid= %d\n",cpid);
+return 0;
+
+
+}
+---------------------------------------------------
+d) exit
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<sys/types.h>
+int main(int argc,char **argv){
+pid_t pid;
+       pid=fork();
+if(pid==0){
+printf("It is the child process and pid is %d\n",getpid());
+exit(0);
+}
+else if(pid>0){
+printf("It is the parent process and pid is %d\n",getpid());
+}
+else{
+printf("Error while forkin\n");
+exit(EXIT_FAILURE);
+
+}
+return 0;
+
+
+}
+--------------------------------------------------------
+c) getpid
+#include<stdio.h>
+#include<unistd.h>
+int main(){
+ int pid;
+ pid=fork();
+if(pid==0){
+printf("\n Process id: %d", getpid());
+printf("\n Process id: %d", getppid());
+}
+return 0;
+
+
+}
+---------------------------------------------------------------
+b)exec
+program1
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+int main(){
+char *args[]={"./program2",NULL};
+execvp(args[0],args);
+         printf("Ending---");
+         return 0;
+}
+program2
+#include<stdio.h>
+#include<unistd.h>
+int main(){
+int i;
+printf("I am program2.c called by execvp()");
+printf("\n");
+return 0;
+
+}
+--------------------------------------------------------------------
+a) fork()
+#include<stdio.h>
+#include<sys/types.h>
+#include<unistd.h>
+int main(){
+fork();
+fork();
+fork();
+printf("hello world\n");
+
+return 0;
+ 
+
+}
+--------------------------------------------------------------------------
+test.txt
+Hello, i am a rajagirian.
+-----------------------------------------------------------------------------
+even.txt
+2,4,6,8,10.
+-----------------------------------------------------------------------------
+
