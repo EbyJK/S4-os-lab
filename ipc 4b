@@ -1,0 +1,64 @@
+#include<sys/ipc.h>
+#include<sys/shm.h>
+#include<stdio.h>
+#include<string.h>
+int main(){
+int i;
+key_t k=1000;
+int shmid=shmget(k,1024,0666 | IPC_CREAT);
+char *str = (char *)shmat(shmid,(void*)0,0);
+printf("Data in shared memory is %s \n",str);
+char strarray[1000];
+strcpy(strarray,str);
+int len,vcount =0,scount=0,ncount=0,count=0;
+len=strlen(strarray);
+for(i=0;i<len;i++){
+if(strarray[i]=='a'|| strarray[i]=='e'||strarray[i]=='i'|| strarray[i]=='o'|| strarray[i]=='u'||strarray[i]=='A' ||strarray[i]=='E'||strarray[i]=='I'||strarray[i]=='O'||strarray[i]=='U'){
+
+vcount +=1;
+
+}
+else if(strarray[i]=='1'||strarray[i]=='2'||strarray[i]=='3'||strarray[i]=='4'||strarray[i]=='5'||strarray[i]=='6'||strarray[i]=='7'||strarray[i]=='8'||strarray[i]=='9'){
+ncount ++;
+
+}
+else if(strarray[i]>=65 && strarray[i]<=122){
+count ++;
+
+
+}
+else {
+printf("%c",strarray[i]);
+scount+=1;
+
+
+}
+
+
+}
+
+printf("\nNo.of vowels is %d ,no. of symbols is %d,no. of digits is %d\n",vcount,scount-1,ncount);
+shmdt(str);
+shmctl(shmid,IPC_RMID,NULL);
+return 0;
+}
+//////////////////////////////////////
+#include<sys/ipc.h>
+#include<sys/shm.h>
+#include<stdio.h>
+#include<string.h>
+int main(){
+key_t k=1000;
+int shmid=shmget(k,1024,0666|IPC_CREAT);
+char *str=(char*)shmat(shmid,(void*)0,0);
+printf("Enter data:");
+fgets(str,1024,stdin);
+if(str[strlen(str) -1]=='\n'){
+str[strlen(str)-1]=='\0';
+
+
+}
+printf("Written data in shared memory is %s \n ",str);
+shmdt(str);
+return 0;
+}
