@@ -1,0 +1,86 @@
+#include <stdio.h>
+void input(int n, int m, int a[n][m]);
+void display(int n, int m, int d[n][m]);
+void main() {
+int n, m;
+printf("Enter the Number of Processes: ");
+scanf("%d", &n);
+printf("Enter the Number of Resources: ");
+scanf("%d", &m);
+int Allocation[n][m], Max[n][m], Available[m], Need[n][m], executed[n], sequence[n];
+int completed = 0, flag = 0;
+printf("Enter Allocation\n");
+input(n, m, Allocation);
+printf("Enter Max\n");
+input(n, m, Max);
+printf("Available Resources\n");
+for (int i = 0; i < m; i++) {
+printf("Enter Availability of %d : ", i);
+scanf("%d", &Available[i]);
+}
+for (int i = 0; i < n; i++) { // Calculate need matrix
+executed[i]=0; //initialise executed as 0
+for (int j = 0; j < m; j++) {
+Need[i][j] = Max[i][j] - Allocation[i][j];
+}
+}
+printf("Allocation Matrix\n");
+display(n, m, Allocation);
+printf("Max Matrix\n");
+display(n, m, Max);
+printf("Need Matrix\n");
+display(n, m, Need);
+printf("Available Resources\n");
+for(int z=0;z<m;z++){
+printf("%d\t",Available[z]);
+}
+printf("\n");
+for (int j = 0; j < 2*n; j++) { // arbitary number of loops
+for (int i = 0; i < n; i++) {
+flag = 0;
+for (int k = 0; k < m; k++) {
+// Check if enough resources are available
+if (Need[i][k] > Available[k]||executed[i] == 1) {
+flag = 1;
+
+break;
+}
+}
+if (flag == 0) { // Execute the process
+for (int l = 0; l < n; l++) {
+Available[l] += Allocation[i][l];
+Allocation[i][l] = 0;
+}
+sequence[completed] = i;
+executed[i] = 1;
+completed++;
+}
+}
+}
+if (completed < n) {
+printf("Deadlock Has Occurred!\n");
+}
+printf("Sequence: ");
+for (int i = 0; i < completed; i++) {
+printf("\tP%d\t", sequence[i]);
+}
+printf("\n");
+}
+void input(int n, int m, int a[n][m]) {
+for (int i = 0; i < n; i++) {
+printf("Process %d\n", i);
+for (int j = 0; j < m; j++) {
+printf("Resource %d: ", j);
+scanf("%d", &a[i][j]);
+}
+}
+}
+void display(int n, int m, int d[n][m]) {
+for (int i = 0; i < n; i++) {
+for (int j = 0; j < m; j++) {
+printf("%d\t", d[i][j]);
+}
+printf("\n");
+}
+printf("\n");
+}
