@@ -1,0 +1,109 @@
+#include <stdio.h>
+struct Process {
+    int id;
+    int AT;
+    int BT;
+    int start;
+    int finish;
+    int TT;
+    int WT;
+    int flag;
+};
+void main() {
+    int n,i,CT = 0;
+	float avgTT=0,avgWT=0;
+    printf("Enter the Number of Processes : ");
+    scanf("%d", &n);
+    struct Process P[n],temp;
+    for (i=0;i<n;i++) {
+        printf("Enter Process ID : ");
+        scanf("%d",&P[i].id);
+        printf("Enter Arrival time of Process %d : ",P[i].id);
+        scanf("%d",&P[i].AT);
+        printf("Enter Burst time for Process %d: ", P[i].id);
+        scanf("%d",&P[i].BT);
+        P[i].start=0;
+        P[i].finish=0;
+        P[i].TT=0;
+        P[i].WT=0;
+        P[i].flag=0;
+    } 
+	for(i=0;i<n-1;i++){// sort as per AT 
+		for(int j=0;j<n-i-1;j++){
+			if(P[j+1].AT<P[j].AT){
+				temp=P[j+1];
+				P[j+1]=P[j];
+				P[j]=temp;
+			}
+		}
+	}
+	CT=P[0].AT; //Current Time
+	for(i=0;i<n-1;i++){ //sort as per BT
+		for(int j=0;j<n-i-1;j++){
+			if(P[j+1].BT<P[j].BT){
+				temp=P[j+1];
+				P[j+1]=P[j];
+				P[j]=temp;
+			}
+		}
+	}
+	//Execution of Process
+	struct Process E[n];
+	int c=0,Total_TT=0,Total_WT=0;
+	while (c < n) {
+        int minBT = 99999; //Initialize with Random Value
+        int minIndex = -1;  // Initialize minIndex with an invalid value
+        for (i = 0; i < n; i++) {
+            //get index of process with Shortest Burst Time and has Arrived
+            if (P[i].AT <= CT && P[i].flag == 0 && P[i].BT < minBT) { 
+                minBT = P[i].BT;
+                minIndex = i;
+            }
+        }
+        //if no process remaining to execute which has Already arrived then minIndex=-1
+        if (minIndex != -1) {
+            E[c] = P[minIndex];
+            P[minIndex].flag = 1;
+            c++;
+            CT += E[c-1].BT;   // Update completion time
+        } else {
+            CT++; // Increment CT if no process is ready
+        }
+    }
+	
+	E[0].start=E[0].AT;
+	E[0].finish=E[0].AT+E[0].BT;
+	E[0].TT=E[0].finish-E[0].AT;
+	E[0].WT=E[0].start-E[0].AT;
+	Total_WT+=E[0].WT;
+	Total_TT+=E[0].TT;
+    for(int i=1;i<n;i++){
+    	E[i].start=E[i-1].finish;
+	    E[i].finish=E[i].start+E[i].BT;
+	    E[i].TT=E[i].finish-E[i].AT;
+	    E[i].WT=E[i].start-E[i].AT;
+	    Total_WT+=E[i].WT;
+	    Total_TT+=E[i].TT;
+    }
+    //Gantt chart
+    printf("\nGantt Chart \n|");
+    for (i=0;i<n;i++) { 
+        printf("\tP%d\t|",E[i].id);
+    }
+    printf("\n");
+    printf("%d\t\t",E[0].start);
+    for (i=0;i<n;i++) { 
+        printf("%d\t\t",E[i].finish);
+    }
+    printf("\n");
+    printf("\n");
+    printf("\nProcess ID\tArrival Time\tBurst Time\tTurnaround Time\tWaiting Time\n");
+    for (i=0;i<n;i++) {
+        printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\n", E[i].id, E[i].AT, E[i].BT, E[i].TT, E[i].WT);
+    }
+    avgTT=(float)Total_TT/n;
+    avgWT=(float)Total_WT/n;
+    printf("\nAverage Turnaround Time : %f \n", avgTT);
+    printf("Average Waiting Time : %f\n", avgWT);
+
+}
