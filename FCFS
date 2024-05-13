@@ -1,0 +1,71 @@
+#include<stdio.h>
+struct Process{
+    int id;
+    int AT;
+    int BT;
+    int start;
+    int finish;
+    int TT;
+    int WT;
+    
+    
+};
+void main(){
+    int n,i,CT=0;
+    float avgTT=0, avgWT=0;
+    printf("Enter the no: of processes: ");
+    scanf("%d",&n);
+    struct Process P[n],temp;
+    for(i=0;i<n;i++){
+        printf("ENter process id: ");
+        scanf("%d",&P[i].id);
+        printf("Enter arrival time of process %d: ",P[i].id);
+        scanf("%d",&P[i].AT);
+        printf("Enter burst time for process %d: ",P[i].id);
+        scanf("%d",&P[i].BT);
+        
+    }
+    for(i=0;i<n-1;i++){
+        for(int j=0;j<n-i-1;j++){
+            if(P[j+1].AT<P[j].AT){
+                temp=P[j+1];
+                P[j+1]=P[j];
+                P[j]=temp;
+                
+            }
+            
+        }
+        
+    }
+    CT=P[0].AT;
+    for(i=0;i<n;i++){
+        P[i].start=CT;
+        P[i].finish=CT+P[i].BT;
+        P[i].TT=P[i].finish-P[i].AT;
+        P[i].WT=P[i].start-P[i].AT;
+        CT=P[i].finish;
+        
+    }
+    printf("\nGantt chart\n|");
+    for(i=0;i<n;i++){
+        printf("\tP%d\t|",P[i].id);
+    }
+    printf("\n");
+    printf("%d\t\t",P[0].start);
+    for(i=0;i<n;i++){
+        printf("%d\t\t",P[i].finish);
+    }
+    printf("\n");
+    printf("\n");
+    printf("\nProcess ID\tArrival Time\tBurst Time\tTurnaround TIme\tWaiting Time\n");
+    for(i=0;i<n;i++){
+        printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\n",P[i].id,P[i].AT,P[i].BT,P[i].TT,P[i].WT);
+        avgTT+=P[i].TT;
+        avgWT+=P[i].WT;
+        
+    }
+    avgTT=avgTT/n;
+    avgWT=avgWT/n;
+    printf("\nAverage Turnaround Time : %f \n",avgTT);
+    printf("average Waiting time: %f \n",avgWT);
+}
